@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandelbrot Fractals</title>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+    <script>
+        // Get the canvas element from the HTML
+        let canvas = document.getElementById("myCanvas");
+
+        // Get the 2D rendering context of the canvas
+        let ctx = canvas.getContext("2d");
+
+        // Get the width and height of the canvas
+        let width = canvas.width;
+        let height = canvas.height;
+
+        // Set the maximum number of iterations for the Mandelbrot function
+        let max_iterations = 1000;
+
+        // Set the range of values to iterate over for the Mandelbrot function
+        let xmin = -2;
+        let xmax = 2;
+        let ymin = -2;
+        let ymax = 2;
+
+        // Define the Mandelbrot function, which takes a complex number as input
+        function mandelbrot(z_real, z_imag) {
+            let zr = z_real;
+            let zi = z_imag;
+            let n = 0;
+
+            // Iterate the function until the maximum number of iterations is reached or the absolute value of the result is greater than 2
+            while (n < max_iterations && zr * zr + zi * zi < 4) {
+                let new_zr = zr * zr - zi * zi + z_real;
+                let new_zi = 2 * zr * zi + z_imag;
+                zr = new_zr;
+                zi = new_zi;
+                n++;
+            }
+
+            // Return the number of iterations it took to reach the maximum or exit the loop
+            return n;
+        }
+
+        // Loop over every pixel in the canvas and calculate the Mandelbrot function for each coordinate
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+
+                // Convert the pixel coordinates to the corresponding complex number in the Mandelbrot set
+                let x_real = xmin + (xmax - xmin) * x / width;
+                let y_imag = ymin + (ymax - ymin) * y / height;
+
+                // Calculate the number of iterations it takes for the corresponding complex number to escape the Mandelbrot set
+                let iterations = mandelbrot(x_real, y_imag);
+
+                // Convert the number of iterations to a hexadecimal color string
+                let color = iterations.toString(16);
+
+                // Ensure that the color string is padded with zeroes to 3 digits
+                while (color.length < 3) {
+                    color = "0" + color;
+                }
+
+                // Set the fill color of the canvas to the computed color and fill the pixel
+                ctx.fillStyle = "#" + color;
+                ctx.fillRect(x, y, 1, 1);
+            }
+        }
+    </script>
+</body>
+
+</html>
